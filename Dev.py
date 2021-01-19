@@ -4,6 +4,8 @@ import plotly.express as px
 df = pd.read_csv('data.csv')
 #print(df.columns)
 
+#TEST!!!
+
 
 filtered_df = df[df.year >= 2015].copy()
 filtered_df['artists'] = filtered_df['artists'].apply(lambda x: x[1:-1].replace("'", ""))
