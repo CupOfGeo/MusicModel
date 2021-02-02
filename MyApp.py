@@ -24,13 +24,13 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
-app.title='beer'
+app.title='Music'
 
 
 app.layout = html.Div([
     html.H4(children='Music'),
 
-    dcc.Input(id="art_text", type="text", value="", placeholder='Artist'),
+    dcc.Input(id="art_text", type="text", value="Kanye", placeholder='Artist'),
     dcc.Input(id="song_text", type="text", value="", placeholder='Song'),
 
     #dash_table.DataTable(
@@ -48,13 +48,9 @@ app.layout = html.Div([
     dcc.Dropdown(
         id='x-slider',
         options=[{'label': i, 'value': i} for i in df.columns],
-        value='year')
-    # ),
-    # dcc.Dropdown(
-    #     id='c-slider',
-    #     options=[{'label': i, 'value': i} for i in df.columns],
-    #     value='energy'
-    # )
+        value='year'),
+
+    html.P("This app was made by George Mazzeo, Ryan Powell, Anastasios Glaros")
 
 ])
 
@@ -95,16 +91,17 @@ def update_figure(selected_y, selected_x,art,song_name):
 
 
     color_dict = {
-    'hip-hop':'purple',
-    'jazz':'blue',
-    'rock':'red',
-    'classical':'yellow',
-    'metal':'black',
-    'reggae':'green'
+    'hip-hop':'#636EFA',
+    'jazz':'#EF553B',
+    'rock':'#00CC96',
+    'classical':'#AB63FA',
+    'metal':'#FFA15A',
+    'reggae':'#19D3F3'
     }
 
-    print(filtered_df.columns)
-    size = f_net[["jazz", "classical", "rock", "hip-hop", "reggae", "metal"]].max(axis=1) 
+
+    #print(filtered_df.columns)
+    size = f_net[["jazz", "classical", "rock", "hip-hop", "reggae", "metal"]].max(axis=1)
     size_norm = []
 
     for element in size:
@@ -112,16 +109,19 @@ def update_figure(selected_y, selected_x,art,song_name):
             size_norm.append((element - 0.5) * 2)
         else:
             size_norm.append(0.1)
-            
+
     fig = px.scatter(
         filtered_df, y=selected_y, x=selected_x, color='pred',
-        color_discrete_map=color_dict, hover_data=["name","artists"],opacity=0.7
+        color_discrete_map=color_dict, hover_data=["name","artists"],opacity=0.7,
+        title='Random Forest'
     )
 
     fig_net = px.scatter(f_net, y=selected_y, x=selected_x, hover_data=[
             "name","artists", "jazz", "classical", "rock", "hip-hop", "reggae", "metal"
-        ],opacity=1, color=f_net[["jazz", "classical", "rock", "hip-hop", "reggae", "metal"]].idxmax(axis=1),
-        size=size_norm)
+        ],opacity=1, color_discrete_map=color_dict,color=f_net[["jazz", "classical", "rock", "hip-hop", "reggae", "metal"]].idxmax(axis=1),
+        #size=size_norm,
+        title ="Neural Network")
+
     fig.update_layout(transition_duration=500)
     fig_net.update_layout(transition_duration=500)
 
